@@ -24,11 +24,14 @@ function setCache(key, value) {
 }
 
 // 数据库连接配置
+// 数据库连接配置
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  ssl: process.env.NODE_ENV === 'production' 
+    ? {
+        rejectUnauthorized: false
+      }
+    : false
 });
 
 // 测试数据库连接
