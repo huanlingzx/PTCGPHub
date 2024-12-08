@@ -104,6 +104,7 @@ export default function CardDetail({ params }) {
             alt={card.name}
             fill
             priority
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 16vw"
             className="object-contain"
           />
         </div>

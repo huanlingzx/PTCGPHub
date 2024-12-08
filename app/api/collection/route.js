@@ -9,26 +9,26 @@ const pool = new Pool({
   }
 });
 
-// 创建索引的函数
-async function createCollectionIndexesIfNotExist() {
-  const client = await pool.connect();
-  try {
-    await client.query(`
-      DO $$ 
-      BEGIN 
-        -- OwnedCards表的索引
-        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_ownedcards_card_id') THEN
-          CREATE INDEX idx_ownedcards_card_id ON OwnedCards(card_id);
-        END IF;
-      END $$;
-    `);
-    console.log('Collection indexes checked/created successfully');
-  } catch (error) {
-    console.error('Error creating collection indexes:', error);
-  } finally {
-    client.release();
-  }
-}
+// // 创建索引的函数
+// async function createCollectionIndexesIfNotExist() {
+//   const client = await pool.connect();
+//   try {
+//     await client.query(`
+//       DO $$ 
+//       BEGIN 
+//         -- OwnedCards表的索引
+//         IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_ownedcards_card_id') THEN
+//           CREATE INDEX idx_ownedcards_card_id ON OwnedCards(card_id);
+//         END IF;
+//       END $$;
+//     `);
+//     console.log('Collection indexes checked/created successfully');
+//   } catch (error) {
+//     console.error('Error creating collection indexes:', error);
+//   } finally {
+//     client.release();
+//   }
+// }
 
 // 在应用启动时创建索引
 // createCollectionIndexesIfNotExist();

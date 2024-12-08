@@ -39,39 +39,39 @@ pool.on('error', (err) => {
   console.error('Unexpected error on idle client', err);
 });
 
-// 创建索引的函数
-async function createIndexesIfNotExist() {
-  const client = await pool.connect();
-  try {
-    // 检查和创建索引
-    await client.query(`
-      DO $$ 
-      BEGIN 
-        -- Cards表的索引
-        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_cards_localid') THEN
-          CREATE INDEX idx_cards_localid ON Cards(localId);
-        END IF;
+// // 创建索引的函数
+// async function createIndexesIfNotExist() {
+//   const client = await pool.connect();
+//   try {
+//     // 检查和创建索引
+//     await client.query(`
+//       DO $$ 
+//       BEGIN 
+//         -- Cards表的索引
+//         IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_cards_localid') THEN
+//           CREATE INDEX idx_cards_localid ON Cards(localId);
+//         END IF;
         
-        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_cards_category') THEN
-          CREATE INDEX idx_cards_category ON Cards(category);
-        END IF;
+//         IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_cards_category') THEN
+//           CREATE INDEX idx_cards_category ON Cards(category);
+//         END IF;
         
-        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_cards_rarity') THEN
-          CREATE INDEX idx_cards_rarity ON Cards(rarity);
-        END IF;
+//         IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_cards_rarity') THEN
+//           CREATE INDEX idx_cards_rarity ON Cards(rarity);
+//         END IF;
         
-        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_cards_pack') THEN
-          CREATE INDEX idx_cards_pack ON Cards(pack);
-        END IF;
-      END $$;
-    `);
-    console.log('Indexes checked/created successfully');
-  } catch (error) {
-    console.error('Error creating indexes:', error);
-  } finally {
-    client.release();
-  }
-}
+//         IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'idx_cards_pack') THEN
+//           CREATE INDEX idx_cards_pack ON Cards(pack);
+//         END IF;
+//       END $$;
+//     `);
+//     console.log('Indexes checked/created successfully');
+//   } catch (error) {
+//     console.error('Error creating indexes:', error);
+//   } finally {
+//     client.release();
+//   }
+// }
 
 // 在应用启动时创建索引
 // createIndexesIfNotExist();
@@ -87,12 +87,12 @@ export async function GET(request) {
       const id = searchParams.get('id');
 
       if (id) {
-        const cacheKey = `card:${id}`;
-        const cachedCard = getCache(cacheKey);
+        // const cacheKey = `card:${id}`;
+        // const cachedCard = getCache(cacheKey);
         
-        if (cachedCard) {
-          return NextResponse.json({ card: cachedCard });
-        }
+        // if (cachedCard) {
+        //   return NextResponse.json({ card: cachedCard });
+        // }
 
         // 获取单张卡片详情
         const cardResult = await client.query(`
@@ -126,20 +126,20 @@ export async function GET(request) {
         
         const card = cardResult.rows[0];
         
-        if (card) {
-          setCache(cacheKey, card);
-        }
+        // if (card) {
+        //   setCache(cacheKey, card);
+        // }
         
         return NextResponse.json({ card });
       }
 
-      // 列表查询缓存
-      const cacheKey = `cards:${rarity || ''}:${pack || ''}:${category || ''}`;
-      const cachedResult = getCache(cacheKey);
+      // // 列表查询缓存
+      // const cacheKey = `cards:${rarity || ''}:${pack || ''}:${category || ''}`;
+      // const cachedResult = getCache(cacheKey);
       
-      if (cachedResult) {
-        return NextResponse.json(cachedResult);
-      }
+      // if (cachedResult) {
+      //   return NextResponse.json(cachedResult);
+      // }
 
       // 主查询
       const mainQuery = `
@@ -189,7 +189,7 @@ export async function GET(request) {
         cards: result.rows
       };
 
-      setCache(cacheKey, response);
+      // setCache(cacheKey, response);
       
       return NextResponse.json(response);
     } finally {
